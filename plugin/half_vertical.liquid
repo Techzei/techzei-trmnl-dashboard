@@ -1,0 +1,24 @@
+{% assign tz_articles = rss.channel.item %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = channel.item %}{% endif %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = data.rss.channel.item %}{% endif %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = data.channel.item %}{% endif %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = data.item %}{% endif %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = items %}{% endif %}
+<style>
+  .tz-narrow { box-sizing: border-box; width: 100%; height: 100%; color: #111; font-family: Arial, Helvetica, sans-serif; }
+  .tz-narrow-head { border-bottom: 3px solid #111; padding-bottom: 8px; font-size: 11px; line-height: 1; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+  .tz-narrow-label { padding: 12px 0 5px; font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+  .tz-narrow-story { padding: 10px 0; border-bottom: 1px solid #111; }
+  .tz-narrow-title { margin: 0; font-size: 17px; line-height: 1.16; font-weight: 800; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+  .tz-narrow-date { padding-top: 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+</style>
+<div class="layout">
+  <div class="tz-narrow">
+    <div class="tz-narrow-head">Latest articles</div>
+    <div class="tz-narrow-label">Latest articles</div>
+    {% for article in tz_articles limit:3 %}
+    <div class="tz-narrow-story"><h2 class="tz-narrow-title">{{ article.title | escape }}</h2><div class="tz-narrow-date">{{ article.pubDate | date: '%d %b' }}</div></div>
+    {% endfor %}
+  </div>
+</div>
+<div class="title_bar"><span class="title">Latest articles</span></div>

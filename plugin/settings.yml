@@ -1,0 +1,9 @@
+---
+name: Techzei Latest Articles
+strategy: polling
+refresh_interval: 60
+polling_url: https://techzei.com/feed/
+polling_headers: ''
+polling_verb: GET
+no_screen_padding: 'no'
+dark_mode: 'no'

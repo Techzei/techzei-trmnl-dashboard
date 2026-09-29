@@ -1,0 +1,105 @@
+{% assign tz_articles = rss.channel.item %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = channel.item %}{% endif %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = data.rss.channel.item %}{% endif %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = data.channel.item %}{% endif %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = data.item %}{% endif %}
+{% if tz_articles == nil or tz_articles == empty %}{% assign tz_articles = items %}{% endif %}
+{% assign tz_lead = tz_articles | first %}
+
+<style>
+  .tz-board { box-sizing: border-box; width: 100%; height: 100%; display: flex; flex-direction: column; color: #111; font-family: Arial, Helvetica, sans-serif; }
+  .tz-header { height: 49px; flex: 0 0 49px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #111; }
+  .tz-logo { display: block; width: 204px; height: 49px; object-fit: contain; filter: grayscale(1) brightness(.48) contrast(1.2); }
+  .tz-header-side { text-align: right; padding-top: 3px; }
+  .tz-feed-date { font-size: 11px; line-height: 1.2; margin-top: 0; }
+  .tz-columns { display: flex; flex: 1 1 auto; min-height: 0; }
+  .tz-feature { box-sizing: border-box; width: 57%; padding: 16px 20px 8px 0; display: flex; flex-direction: column; min-width: 0; border-right: 2px solid #111; overflow: hidden; }
+  .tz-feature-tag { display: inline-block; align-self: flex-start; background: #111; color: #fff; padding: 5px 8px 4px; font-size: 11px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+  .tz-feature-title { margin: 12px 0 11px; font-size: 25px; line-height: 1.07; letter-spacing: -.6px; font-weight: 800; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+  .tz-feature-copy { flex: 1 1 auto; min-height: 0; overflow: hidden; border-top: 1px solid #111; padding-top: 10px; }
+  .tz-feature-copy-label { margin-bottom: 7px; font-size: 10px; line-height: 1; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+  .tz-feature-copy p { margin: 0 0 8px; font-size: 14px; line-height: 1.25; }
+  .tz-feature-bottom { flex: 0 0 100px; border-top: 1px solid #111; padding-top: 5px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .35px; }
+  .tz-feature-bottom-label { display: flex; flex-direction: column; gap: 7px; }
+  .tz-feature-bottom-label strong { font-size: 11px; line-height: 1.15; }
+  .tz-qr { width: 96px; height: 96px; flex: 0 0 96px; overflow: hidden; }
+  .tz-qr .qr-code, .tz-qr svg, .tz-qr img { display: block; width: 96px !important; height: 96px !important; }
+  .tz-list { box-sizing: border-box; width: 43%; padding: 18px 0 0 21px; min-width: 0; display: flex; flex-direction: column; }
+  .tz-list-heading { font-size: 12px; line-height: 1; font-weight: 900; letter-spacing: 1.4px; text-transform: uppercase; padding-bottom: 12px; }
+  .tz-list-item { display: flex; gap: 11px; flex: 1 1 0; min-height: 0; border-top: 1px solid #111; padding: 9px 0 7px; }
+  .tz-list-number { width: 23px; flex: 0 0 23px; font-size: 11px; line-height: 1.2; font-weight: 800; }
+  .tz-list-copy { min-width: 0; display: flex; flex-direction: column; justify-content: space-between; }
+  .tz-list-title { margin: 0; font-size: 16px; line-height: 1.17; font-weight: 750; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+  .tz-list-date { font-size: 10px; line-height: 1.1; font-weight: 700; text-transform: uppercase; padding-top: 4px; }
+  .tz-empty { padding: 28px 0; font-size: 20px; font-weight: 700; }
+</style>
+
+<div class="layout">
+  <div class="tz-board">
+    <div class="tz-header">
+      <img class="tz-logo" src="https://techzei.com/wp-content/uploads/2014/05/cropped-TechzeiLogo2x.png" alt="Techzei logo">
+      <div class="tz-header-side">
+        <div class="tz-feed-date">{{ 'now' | date: '%d %b %Y' }}</div>
+      </div>
+    </div>
+
+    {% if tz_lead %}
+    <div class="tz-columns">
+      <div class="tz-feature">
+        <div class="tz-feature-tag">Newest story</div>
+        <h1 class="tz-feature-title">{{ tz_lead.title | escape_once }}</h1>
+        {% assign tz_html = tz_lead['content:encoded'] %}
+        {% if tz_html == nil or tz_html == empty %}{% assign tz_html = tz_lead.content_encoded %}{% endif %}
+        {% if tz_html == nil or tz_html == empty %}{% assign tz_html = tz_lead.encoded %}{% endif %}
+        {% if tz_html == nil or tz_html == empty %}{% assign tz_html = tz_lead.content %}{% endif %}
+        {% if tz_html['__content__'] %}{% assign tz_html = tz_html['__content__'] %}{% endif %}
+        {% if tz_html['encoded'] %}{% assign tz_html = tz_html['encoded'] %}{% endif %}
+        {% if tz_html contains '</style>' %}{% assign tz_html = tz_html | split: '</style>' | last %}{% endif %}
+        <div class="tz-feature-copy">
+          <div class="tz-feature-copy-label">From the article</div>
+          {% if tz_html != nil and tz_html != empty %}
+            {% assign tz_paragraphs = tz_html | replace: '</p>', '|||TZ_BREAK|||' | split: '|||TZ_BREAK|||' %}
+            {% assign tz_read_count = 0 %}
+            {% for section in tz_paragraphs limit:6 %}
+              {% assign tz_paragraph = section | strip_html | strip | replace: '₹', 'Rs ' | replace: '&#8377;', 'Rs ' %}
+              {% if tz_paragraph != empty and tz_read_count < 2 %}
+                {% assign tz_limit = 280 %}
+                {% if tz_read_count == 1 %}{% assign tz_limit = 185 %}{% endif %}
+                <p>{{ tz_paragraph | truncate: tz_limit | escape_once }}</p>
+                {% assign tz_read_count = tz_read_count | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+            {% if tz_read_count == 0 %}
+              {% assign tz_summary = tz_lead.description | split: '</p>' | first | strip_html | strip %}
+              <p>{{ tz_summary | escape_once }}</p>
+            {% endif %}
+          {% else %}
+            {% assign tz_summary = tz_lead.description | split: '</p>' | first | strip_html | strip | replace: '₹', 'Rs ' | replace: '&#8377;', 'Rs ' %}
+            <p>{{ tz_summary | escape_once }}</p>
+          {% endif %}
+        </div>
+        <div class="tz-feature-bottom">
+          <div class="tz-feature-bottom-label"><span>{{ tz_lead.pubDate | date: '%d %b %Y' }}</span><strong>Scan to read the full article</strong></div>
+          {% if tz_lead.link %}<div class="tz-qr">{{ tz_lead.link | qr_code }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="tz-list">
+        <div class="tz-list-heading">Latest stories</div>
+        {% for article in tz_articles offset:1 limit:4 %}
+        <div class="tz-list-item">
+          <div class="tz-list-number">0{{ forloop.index | plus: 1 }}</div>
+          <div class="tz-list-copy">
+            <h2 class="tz-list-title">{{ article.title | escape }}</h2>
+            <div class="tz-list-date">{{ article.pubDate | date: '%d %b' }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="tz-empty">New articles appear here after the first feed refresh.</div>
+    {% endif %}
+  </div>
+</div>
+<div class="title_bar"><span class="title">Latest articles</span></div>
